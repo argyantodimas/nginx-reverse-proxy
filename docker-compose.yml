@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  nginx:
+    container_name: backend-reverse-proxy
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - backend-network
+    depends_on:
+      - backend
+      - backend2
+  backend:
+    container_name: backend-product
+    build: ./backend
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    networks:
+      - backend-network
+  backend2:
+    container_name: backend-user
+    build: ./backend2
+    ports:
+      - "4000:4000"
+    expose:
+      - "4000"
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    name: backend-network
+    driver: bridge
